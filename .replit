@@ -1,0 +1,5 @@
+entrypoint = "DiceGame.java"
+run = ["bash", "-c", "mkdir -p build && javac -encoding UTF-8 -d build Helper/*.java Die.java Player.java PlayerInput.java GameStart.java DiceGame.java && exec java -cp build DiceGame"]
+
+[gitHubImport]
+requiredFiles = [".replit", "replit.nix"]
