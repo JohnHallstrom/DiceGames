@@ -12,7 +12,7 @@ public class PlayerInput {
      * @return the text the user entered.
      */
     public String readLine() {
-        return scanner.nextLine().trim().toLowerCase();
+        return scanner.nextLine().trim();
     }
 
     /**
@@ -66,6 +66,26 @@ public class PlayerInput {
             }
 
             System.out.println(TerminalColors.RED + "The name cannot be empty." + TerminalColors.RESET);
+        }
+    }
+
+    /**
+     * Keeps asking until the player answers yes or no.
+     *
+     * @param prompt the message to show before reading the answer.
+     * @return true when the player wants to continue.
+     */
+    public boolean readYesNo(String prompt) {
+        while (true) {
+            System.out.print(TerminalColors.YELLOW + prompt + TerminalColors.RESET);
+            String answer = readLine().toLowerCase();
+            if (answer.equals("yes") || answer.equals("y")) {
+                return true;
+            }
+            if (answer.equals("no") || answer.equals("n")) {
+                return false;
+            }
+            System.out.println(TerminalColors.RED + "Please answer yes or no." + TerminalColors.RESET);
         }
     }
 }

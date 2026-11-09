@@ -1,41 +1,54 @@
 import Helper.TerminalColors;
+import Helper.TerminalPanel;
 
 /**
- * Sets up and runs the dice game by collecting player choices and starting each
- * round.
+ * Sets up and runs the dice guessing game.
  */
 public class DiceGame {
-        /** Reads and validates input entered by the player. */
-        private final PlayerInput scanner = new PlayerInput();
+    private final PlayerInput input = new PlayerInput();
 
-        public static void main(String[] args) {
-                DiceGame diceGame = new DiceGame();
+    public static void main(String[] args) {
+        new DiceGame().play();
+    }
 
-                System.out.println(TerminalColors.CYAN + "\n================ welcome to dice game! ================"
-                                + TerminalColors.RESET);
+    private void play() {
+        showTitle();
 
-                while (true) {
-                        // Get the game settings and the player's name.
-                        int numberOfRounds = diceGame.scanner.readIntInRange("How many rounds do you want to play? ", 1,
-                                        Integer.MAX_VALUE);
-                        int numberOfSides = diceGame.scanner.readIntInRange("How many sides should the die have? ", 1,
-                                        Integer.MAX_VALUE);
-                        String playerName = diceGame.scanner.readName("What is your name? ");
+        boolean playAgain;
+        do {
+            showSetup();
+            String playerName = input.readName("What is your name? ");
+            int numberOfRounds = input.readIntInRange("How many rounds do you want to play? ", 1,
+                    Integer.MAX_VALUE);
+            int numberOfSides = input.readIntInRange("How many sides should the die have? ", 1,
+                    Integer.MAX_VALUE);
 
-                        // Create the player and die using the chosen settings.
-                        Player player = new Player(playerName);
-                        Die die = new Die(numberOfSides);
+            Player player = new Player(playerName);
+            Die die = new Die(numberOfSides);
+            showGameCard(player, numberOfRounds, numberOfSides);
 
-                        // Show the player a summary of the game.
-                        System.out.println(TerminalColors.BLUE + "\nHi, " + player.getName() + "! You are playing "
-                                        + numberOfRounds
-                                        + " rounds with a " + numberOfSides + " sided die." + TerminalColors.RESET);
+            int bestStreak = GameStart.playRound(input, player, die, numberOfRounds);
+            playAgain = GameStart.endRound(player.getScore(), numberOfRounds, bestStreak, input);
+        } while (playAgain);
+    }
 
-                        int roundsPlayed = 1;
-                        GameStart.playRound(diceGame.scanner, player, roundsPlayed, die, numberOfRounds);
+    private static void showTitle() {
+        TerminalPanel.print(TerminalColors.BRIGHT_MAGENTA + TerminalColors.BOLD,
+                "D I C E   D U E L   *   R O L L   T H E   D I C E",
+                "", "YOUR LUCK. YOUR GUESS. YOUR GLORY.", "");
+        System.out.println(TerminalColors.CYAN + "                 STEP UP TO THE TABLE" + TerminalColors.RESET);
+    }
 
-                        GameStart.endRound(player.getScore(), numberOfRounds, diceGame.scanner.readLine());
+    private static void showSetup() {
+        System.out.println();
+        System.out.println(TerminalColors.BRIGHT_CYAN + TerminalColors.BOLD
+                + "  >>> NEW GAME: SET YOUR STAKES <<<" + TerminalColors.RESET);
+    }
 
-                }
-        }
+    private static void showGameCard(Player player, int rounds, int sides) {
+        TerminalPanel.print(TerminalColors.BLUE, "GAME CARD",
+                "PLAYER: " + player.getName(),
+                "ROUNDS: " + rounds + "     DIE: " + sides + " sides",
+                "RULE: Guess the exact number to score a point!");
+    }
 }
